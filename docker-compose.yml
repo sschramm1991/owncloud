@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  owncloud:
+    image: steven1991/owncloud
+    deploy:
+      placement:
+        constraints: [node.labels.cpu-type == x86]
+    restart: always
+    ports:
+      - 8443:443
+    depends_on:
+      - db
+    volumes:
+      - ./apps:/var/www/html/apps
+      - ./config:/var/www/html/config
+      - ./data:/var/www/html/data
+      - ./certs:/etc/apache2/ssl
+    networks:
+      - owncloud-network
+
+  db:
+    image: webhippie/mariadb:latest
+    deploy:
+      placement:
+        constraints: [node.labels.cpu-type == x86]
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=owncloud
+      - MARIADB_USERNAME=owncloud
+      - MARIADB_PASSWORD=owncloud
+      - MARIADB_DATABASE=owncloud
+      - MARIADB_MAX_ALLOWED_PACKET=512M
+      - MARIADB_INNODB_LOG_FILE_SIZE=512M
+      - MARIADB_INNODB_LARGE_PREFIX=ON
+      - MARIADB_INNODB_FILE_FORMAT=Barracuda
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - owncloud-network
+
+networks:
+  owncloud-network:
