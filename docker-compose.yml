@@ -3,9 +3,9 @@ version: '3'
 services:
   owncloud:
     image: steven1991/owncloud
-    deploy:
-      placement:
-        constraints: [node.labels.cpu-type == x86]
+    #deploy:
+    #  placement:
+    #    constraints: [node.labels.cpu-type == x86]
     restart: always
     ports:
       - 8443:443
@@ -21,9 +21,9 @@ services:
 
   db:
     image: webhippie/mariadb:latest
-    deploy:
-      placement:
-        constraints: [node.labels.cpu-type == x86]
+    #deploy:
+    #  placement:
+    #    constraints: [node.labels.cpu-type == x86]
     restart: always
     environment:
       - MARIADB_ROOT_PASSWORD=owncloud
