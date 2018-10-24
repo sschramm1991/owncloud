@@ -1,4 +1,4 @@
-From owncloud:10.0.9
+From owncloud:10.0.10
 
 COPY default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
