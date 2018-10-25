@@ -1,8 +1,8 @@
-version: '3'
+version: '3.1'
 
 services:
   owncloud:
-    image: steven1991/owncloud
+    image: steven1991/owncloud:10.0.10
     deploy:
       placement:
         constraints: [node.labels.cpu-type == x86]
@@ -14,26 +14,28 @@ services:
     volumes:
       - ./apps:/var/www/html/apps
       - ./config:/var/www/html/config
-      - ./data:/var/www/html/data
+#      - ./data:/var/www/html/data
+      - /Medien/Data:/Data
       - ./certs:/etc/apache2/ssl
     networks:
       - owncloud-network
 
   db:
-    image: webhippie/mariadb:latest
+#    image: webhippie/mariadb:latest
+    image: steven1991/mariadb:1.0
     deploy:
       placement:
         constraints: [node.labels.cpu-type == x86]
     restart: always
     environment:
-      - MARIADB_ROOT_PASSWORD=owncloud
-      - MARIADB_USERNAME=owncloud
-      - MARIADB_PASSWORD=owncloud
-      - MARIADB_DATABASE=owncloud
-      - MARIADB_MAX_ALLOWED_PACKET=512M
-      - MARIADB_INNODB_LOG_FILE_SIZE=512M
-      - MARIADB_INNODB_LARGE_PREFIX=ON
-      - MARIADB_INNODB_FILE_FORMAT=Barracuda
+     -  MARIADB_ROOT_PASSWORD=DOCKER_SECRET->oc_mysql_root
+     -  MARIADB_USERNAME=root
+     -  MARIADB_PASSWORD=DOCKER_SECRET->oc_mysql_root
+     -  MARIADB_DATABASE=owncloud
+     -  MARIADB_MAX_ALLOWED_PACKET=512M
+     -  MARIADB_INNODB_LOG_FILE_SIZE=512M
+     -  MARIADB_INNODB_LARGE_PREFIX=ON
+     -  MARIADB_INNODB_FILE_FORMAT=Barracuda
     healthcheck:
       test: ["CMD", "/usr/bin/healthcheck"]
       interval: 30s
@@ -41,8 +43,14 @@ services:
       retries: 5
     volumes:
       - ./mysql:/var/lib/mysql
+    secrets:
+      - oc_mysql_root
     networks:
       - owncloud-network
+
+secrets:
+  oc_mysql_root:
+    external: true  
 
 networks:
   owncloud-network:
