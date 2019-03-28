@@ -1,4 +1,4 @@
-From owncloud:10.0.10
+From owncloud:15
 Maintainer Steven Schramm <steven.schramm91@googlemail.com>
 
 COPY default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
