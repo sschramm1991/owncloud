@@ -2,27 +2,31 @@ version: '3.1'
 
 services:
   owncloud:
-    image: steven1991/owncloud:10.0.10
+    #image: steven1991/owncloud:10.0.10
+    image: steven1991/nextcloud:15
+#    container_name: owncloud-prod
     deploy:
       placement:
         constraints: [node.labels.cpu-type == x86]
     restart: always
     ports:
-      - 8443:443
+      - 443:443
     depends_on:
       - db
     volumes:
+      - ./custom_apps:/var/www/html/custom_apps
       - ./apps:/var/www/html/apps
       - ./config:/var/www/html/config
 #      - ./data:/var/www/html/data
-      - /Medien/Data:/Data
+      - /Data:/Data
       - ./certs:/etc/apache2/ssl
     networks:
       - owncloud-network
 
   db:
 #    image: webhippie/mariadb:latest
-    image: steven1991/mariadb:1.0
+    image: steven1991/mariadb:1.1
+#    container_name: mariadb-prod
     deploy:
       placement:
         constraints: [node.labels.cpu-type == x86]
