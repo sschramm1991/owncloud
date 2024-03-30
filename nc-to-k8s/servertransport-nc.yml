@@ -1,0 +1,8 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: ServersTransport
+metadata:
+  name: mytransport
+  namespace: nextcloud
+
+spec:
+    insecureSkipVerify: true

@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.27.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.27.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/owncloud-network: "true"
+        io.kompose.service: db
+    spec:
+      containers:
+        - env:
+            - name: MARIADB_DATABASE
+              value: owncloud
+            - name: MARIADB_INNODB_FILE_FORMAT
+              value: Barracuda
+            - name: MARIADB_INNODB_LARGE_PREFIX
+              value: "ON"
+            - name: MARIADB_INNODB_LOG_FILE_SIZE
+              value: 512M
+            - name: MARIADB_MAX_ALLOWED_PACKET
+              value: 512M
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: maridb
+                  key: password
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: maridb
+                  key: root_password
+            - name: MARIADB_USERNAME
+              value: root
+          image: steven1991/mariadb:1.1
+          livenessProbe:
+            exec:
+              command:
+                - /usr/bin/healthcheck
+            failureThreshold: 5
+            periodSeconds: 30
+            timeoutSeconds: 10
+          name: db
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: db-claim0
+      restartPolicy: Always
+      volumes:
+        - name: db-claim0
+          persistentVolumeClaim:
+            claimName: db-claim0-pvc
+status: {}

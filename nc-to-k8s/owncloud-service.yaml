@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.27.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: owncloud
+  name: owncloud
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      nodePort: 30318
+    - name: https
+      port: 443
+      targetPort: 443
+      nodePort: 30320
+  selector:
+  selector:
+    io.kompose.service: owncloud
+status:
+  loadBalancer: {}
