@@ -1,4 +1,4 @@
-From nextcloud:27.1.3
+From nextcloud:27.1.11
 Maintainer Steven Schramm <steven.schramm91@googlemail.com>
 
 COPY default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
